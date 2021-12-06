@@ -1,5 +1,7 @@
 package springsecurity.web.controller;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import springsecurity.business.entities.User;
 import springsecurity.business.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -19,13 +22,23 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping({"/", "/saveUser"})
+    //получение и отображение всех работников
+    @GetMapping({"/", "/saveUser"})
     public String showAllUsers(ModelMap model) {
         model.addAttribute("listUsers", userService.getUsers());
         return "show-all-users";
     }
 
-    @RequestMapping(value = "/idUser", params = {"idDelete"})
+    //получение и отображение ОДНОГО работника
+    @GetMapping(value = "/idUser", params = {"idUser"})
+    public String showOneUser(ModelMap model, HttpServletRequest req) {
+        int id = Integer.parseInt(req.getParameter("idUser"));
+        model.addAttribute("user", userService.getUser(id));
+        return "show-user";
+    }
+
+    //удаление одного работника
+    @DeleteMapping(value = "/idUser", params = {"idDelete"})
     public String deleteUser(ModelMap model, HttpServletRequest req) {
         int id = Integer.parseInt(req.getParameter("idDelete"));
         userService.deleteUser(id);
