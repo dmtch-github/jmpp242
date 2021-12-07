@@ -5,16 +5,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import springsecurity.business.entities.Roles;
 import springsecurity.business.entities.User;
 import springsecurity.business.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -38,14 +35,85 @@ public class UserController {
     public String hello() {
         return "hello";
     }
+
     @GetMapping("/user")
-    public String user() {
+    public String user(Model model) {
+
         return "user";
     }
+
     @GetMapping("/admin")
-    public String admin() {
+    public String admin(Model model) {
+        model.addAttribute("listUsers", userService.getUsers());
+        model.addAttribute("urlRoot", "/admin");
         return "admin";
     }
+
+        //удаление одного работника
+    @PostMapping(value = "/admin", params = "delete")
+    public String deleteUser(ModelMap model, HttpServletRequest req) {
+        //TODO в delete взять номер для удаления пользователя
+        //а вот через RequestParam не могу взять
+                             //@RequestParam("id") String num) {
+//        System.out.println("num=" + num);
+        System.out.println("delete=" + req.getParameter("delete"));
+//        int id = Integer.parseInt(req.getParameter("idDelete"));
+//        userService.deleteUser(id);
+        return "redirect:/admin";
+    }
+
+
+
+//    // Когда запрошенный URI / method7 / 123, значение id равно 123
+//    @RequestMapping(value = "/method7/{id}")
+//    public String method7(
+//            @PathVariable("id") Integer id
+//    ) {
+//        return "method7 with id=" + id;
+//    }
+
+    @PostMapping(value = "/admin", params = "add") //,"update"})
+    //TODO здесь не могу взять 2 параметра почему?
+    public String editUser(ModelMap model, HttpServletRequest req) {
+        System.out.println("addUser сработал");
+        String num = req.getParameter("update");
+        if (num == null) {
+            model.addAttribute("user", new User());
+        } else {
+            try {
+                int id = Integer.parseInt(num);
+                model.addAttribute("user", userService.getUser(id));
+            } catch(NumberFormatException e) {
+                //TODO как обработать эту ошибку, что выдать на форму?
+            }
+        }
+        model.addAttribute("urlRoot", "/admin");
+        return "edit-user";
+    }
+
+
+
+    @PostMapping(value = "/admin", params = "save")
+    public String saveUser(User user) {
+        userService.saveUser(user);
+        return "redirect:/admin";
+    }
+
+    @PostMapping(value = "/admin", params = "redirect")
+    public String adminRedirect(ModelMap model) {
+        return "redirect:/admin";
+    }
+
+
+
+
+//    public String deleteUser(ModelMap model, HttpServletRequest req) {
+//        int id = Integer.parseInt(req.getParameter("idDelete"));
+//        userService.deleteUser(id);
+//        return "redirect:/";
+//    }
+
+
 
     @GetMapping("/login")
     public String get(Model model) {

@@ -1,13 +1,41 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title th:utext="#{page.title.all-users}">User list</title>
 </head>
 <body>
-<div>
-    <h1>ADMIN</h1>
-</div>
+<h3 th:utext="#{page.title.all-users}">Table title</h3>
+<form th:action="@{${urlRoot}}" method="post">
+    <table border="1px" aria-describedby="userList">
+        <tr>
+            <th id="name" th:utext="#{table.column.name}">Name</th>
+            <th id="lastName" th:utext="#{table.column.lastName}">Last Name</th>
+            <th id="age" th:utext="#{table.column.age}">Age</th>
+            <th id="email" th:utext="#{table.column.email}">E-mail</th>
+            <th id="role" th:utext="#{table.column.role}">Role</th>
+            <th id="buttonUpdate" th:utext="#{table.column.update}">Update</th>
+            <th id="buttonDelete" th:utext="#{table.column.delete}">Delete</th>
+        </tr>
+        <tr th:each ="u : ${listUsers}">
+            <td th:utext="${u.name}">...</td>
+            <td th:utext="${u.lastName}">...</td>
+            <td th:utext="${u.age}">...</td>
+            <td th:utext="${u.email}">...</td>
+            <td th:utext="${u.role}">...</td>
+            <td>
+                <button type="submit" name="update" th:value="${u.id}" th:text="#{button.update}">Update</button>
+            </td>
+            <td>
+                <button type="submit" name="delete" th:value="${u.id}" th:text="#{button.delete}">Delete</button>
+            </td>
+        </tr>
+    </table>
+</form>
+<form th:action="@{${urlRoot}}" th:method="post">
+    <div>
+        <button type="submit" name="add" th:text="#{button.add}">Add</button>
+    </div>
+</form>
 </body>
 </html>

@@ -17,14 +17,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 
     private boolean hasRole(Collection<? extends GrantedAuthority> collection, String role) {
-
         return collection.stream().anyMatch(x -> x.getAuthority().equals(role));
-//        for(GrantedAuthority ga: collection) {
-//            if(ga.getAuthority().equals(role)) {
-//                return true;
-//            }
-//        }
-//        return false;
     }
 
 
@@ -32,17 +25,16 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
-        System.out.println("Роли авторизованного = " + authentication.getAuthorities());
-
-//        if(request.isUserInRole("ROLE_ADMIN")) {
+//        if(request.isUserInRole("ROLE_ADMIN")) TODO данный метод не определяет принадлежность к Роли???
+        String url = "/";
         if(hasRole(authentication.getAuthorities(),Roles.ROLE_ADMIN)) {
-            System.out.println("Обнаружен АДМИН");
-            response.sendRedirect("/admin");
+            url = "/admin";
+        } else if(hasRole(authentication.getAuthorities(),Roles.ROLE_USER)) {
+            url = "/user";
         } else {
-            System.out.println("Обнаружен ЮЗЕР");
-            response.sendRedirect("/user");
+            url = "/";
         }
-
-        System.out.println("Вызван обработчик успешной авторизации");
+        response.sendRedirect(url);
+        System.out.println("Пользователь перенаправлен на страницу " + url);
     }
 }
