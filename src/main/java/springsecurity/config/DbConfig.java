@@ -29,6 +29,7 @@ public class DbConfig {
     @Autowired
     private Environment env;
 
+    //определяет связь с БД, нужен для формирования EntityManager
     @Bean
     public DataSource getDataSource(){
         //сделано через библиотеку javax.sql
@@ -40,12 +41,13 @@ public class DbConfig {
         return dataSource;
     }
 
+    //этот возвращает EntityManagerFactory
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean emf
                 = new LocalContainerEntityManagerFactoryBean();
         emf.setDataSource(getDataSource());
-        //emf.setPackagesToScan("springsecurity"); //заменяет ComponentScan
+        emf.setPackagesToScan("springsecurity"); //заменяет ComponentScan
 
         Properties props = new Properties();
         props.setProperty("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
@@ -58,6 +60,7 @@ public class DbConfig {
         return emf;
     }
 
+    //похоже этот возвращает EntityManager
     @Bean
     public PlatformTransactionManager getTransactionManagerEmf() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
