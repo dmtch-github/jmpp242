@@ -31,7 +31,7 @@ public class AdminController {
         this.userService = userService;
     }
 
-/*
+/* От Сергея
 
 POST это добавить, PATCH или PUT это обновить.
 
@@ -54,6 +54,15 @@ POST это добавить, PATCH или PUT это обновить.
     так ты в цикле же это делаешь, у тебя разница будет только в id запроса
 
 th:action="@{/admin/{id}(id=${user.getId()})}"
+
+@PatchMapping("/{id}")
+public String update(@ModelAttribute("users") User user, @PathVariable("id") Long id) {
+    System.out.println("_______________________________"+user.getUserName()+user.getEmail()+id);
+    userService.update(user, id);
+    return "redirect:/admin";
+}
+
+
  */
 
 
