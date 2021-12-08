@@ -31,10 +31,21 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             url = "/admin";
         } else if(hasRole(authentication.getAuthorities(),Roles.ROLE_USER)) {
             url = "/user";
-        } else {
-            url = "/";
         }
         response.sendRedirect(url);
         System.out.println("Пользователь перенаправлен на страницу " + url);
+
+        /*
+                Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
+        System.out.println("Обнаружены роли: " + roles);
+        if (roles.contains("ROLE_USER")) {
+            httpServletResponse.sendRedirect("/user");
+        } else if(roles.contains("ROLE_ADMIN")) {
+            httpServletResponse.sendRedirect("/admin");
+        } else {
+            httpServletResponse.sendRedirect("/");
+        }
+
+         */
     }
 }

@@ -4,25 +4,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import springsecurity.business.service.UserService;
 
 @Controller
-@RequestMapping("/user")
-public class UserController {
+public class MyController {
 
     private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public MyController(UserService userService) {
         this.userService = userService;
     }
 
-    @GetMapping("/")
-    public String user(Model model) {
 
-        return "user";
+
+    @GetMapping("/")
+    public String hello() {
+        return "hello";
     }
+
+
+    @GetMapping("/login")
+    public String get(Model model) {
+        model.addAttribute("title", "Форма входа");
+        return "login";
+    }
+
+
 
 
 }
