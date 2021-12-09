@@ -10,24 +10,30 @@
         <input type="hidden" th:field="${user.id}"/>
 
         <label th:utext="#{table.column.name} + '<br>'">Name</label>
-        <input type="text" th:field="${user.name}" placeholder="string" />
+        <input type="text" th:field="*{name}" placeholder="string" />
         <br>
         <label th:utext="#{table.column.lastName} + '<br>'">Last Name</label>
-        <input type="text" th:field="${user.lastName}" placeholder="string" />
+        <input type="text" th:field="*{lastName}" placeholder="string" />
         <br>
-        <label th:utext="#{table.column.age} + '<br>'">Last Name</label>
-        <input type="number" th:field="${user.age}"  placeholder="integer" />
+        <label th:utext="#{table.column.age} + '<br>'">Age</label>
+        <input type="number" th:field="*{age}"  placeholder="integer" />
         <br>
-        <label th:utext="#{table.column.email} + '<br>'">Last Name</label>
-        <input type="text" th:field="${user.email}" placeholder="string" />
+        <label th:utext="#{table.column.email} + '<br>'">Email</label>
+        <input type="text" th:field="*{email}" placeholder="string" />
         <br>
-        <label th:utext="#{table.column.role} + '<br>'">Last Name</label>
-        <input type="text" th:field="${user.getRoles}" placeholder="string" />
+        <label th:utext="#{table.column.password} + '<br>'">Password</label>
+        <input type="text" th:field="*{password}" placeholder="string" />
+        <br>
+        <label th:utext="#{table.column.role} + '<br>'">Role</label>
+        <input type="text" th:field="*{textRoles}" placeholder="string" />
+
     </div>
 
     <div>
-        <button type="submit" name="save" th:utext="#{button.save}">Save</button>
-        <button type="submit" name="redirect" th:utext="#{button.cancel}">Cancel</button>
+<!--        <button type="submit" name="save" th:utext="#{button.save}">Save</button>-->
+<!--        <button type="submit" name="redirect" th:utext="#{button.cancel}">Cancel</button>-->
+        <input type="submit" name="save" th:value="#{button.save}">
+        <input type="submit" name="redirect" th:value="#{button.cancel}">
     </div>
 
 </form>

@@ -29,7 +29,9 @@ public class UserDaoMemImp implements UserDao {
         inMemoryUserDetailsManager.createUser(user);
         user = new User(2,"dimax@yandex.ru", "Dimax", "Adminov",
                 (byte)28, "dimax",
-                new HashSet<Role>(Arrays.asList(new Role(0, "ROLE_USER"), new Role(1, "ROLE_ADMIN"))));
+                new HashSet<Role>(Arrays.asList(
+                        new Role(0, "ROLE_USER"),
+                        new Role(1, "ROLE_ADMIN"))));
         users.put(user.getId(),user);
         inMemoryUserDetailsManager.createUser(user);
 
@@ -71,6 +73,18 @@ public class UserDaoMemImp implements UserDao {
                 return user;
         }
         Logger.getLogger("UserDaoMemImp").log(Level.WARNING,"Пользователь с идентификатором {0} не найден", id);
+        return null;
+    }
+
+    @Override
+    public User getUser(String username) {
+        if(inMemoryUserDetailsManager.userExists(username)) {
+            for (User user: users.values()) {
+                if (user.getUsername().equals(username)) {
+                    return user;
+                }
+            }
+        }
         return null;
     }
 }

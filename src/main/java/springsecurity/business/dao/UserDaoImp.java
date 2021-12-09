@@ -30,4 +30,10 @@ public class UserDaoImp implements UserDao {
     public User getUser(int id) {
         return null;
     }
+
+
+    @Override
+    public User getUser(String username) {
+        return null;
+    }
 }
