@@ -22,7 +22,7 @@
             <td th:utext="${u.lastName}">...</td>
             <td th:utext="${u.age}">...</td>
             <td th:utext="${u.email}">...</td>
-            <td th:utext="${u.role}">...</td>
+            <td th:utext="${u.getRoles}">...</td>
             <td>
                 <button type="submit" name="update" th:value="${u.id}" th:text="#{button.update}">Update</button>
             </td>

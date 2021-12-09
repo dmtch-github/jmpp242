@@ -8,8 +8,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import springsecurity.business.entities.Roles;
@@ -19,37 +21,50 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 //@Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    /**
+     * Задаем тип кодирования пароля
+     * Метод конфликтует со строкой задаваемой в методе configure(AuthenticationManagerBuilder auth)
+     * User.UserBuilder userBuilder = User.withDefaultPasswordEncoder();
+     * @return
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
+    }
 
-    //определяем тип кодирования пароля
-    //не сочетается со строкой
-//    User.UserBuilder userBuilder = User.withDefaultPasswordEncoder();
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return NoOpPasswordEncoder.getInstance();
-//    }
-
-    //определяем пользователей
-    //Аутентификация
+    //Аутентификация - идентификация реальности пользователя
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
-        //пароль пока не шифруем
-        User.UserBuilder userBuilder = User.withDefaultPasswordEncoder();
-        //пока описываем пользователей системы в коде программы,потом будем брать из БД
-        auth.inMemoryAuthentication()
-//                .withUser("dima").password("dima").roles(Roles.ADMIN);
-                .withUser(userBuilder.username("dima").password("dima").roles(Roles.USER))
-                .withUser(userBuilder.username("admin").password("admin").roles(Roles.ADMIN))
-                .withUser(userBuilder.username("dimax").password("dimax").roles(Roles.USER,Roles.ADMIN));
+        //создание базы пользователей в слое UserDaoMemImp
+        auth.userDetailsService(inMemoryUserDetailsManager());
+//        //пароль пока не шифруем
+//        User.UserBuilder userBuilder = User.withDefaultPasswordEncoder();
+//        //создание базы пользователей с ручным заполнением
+//        auth.inMemoryAuthentication()
+//                .withUser(userBuilder.username("dima").password("dima").roles(Roles.USER))
+//                .withUser(userBuilder.username("admin").password("admin").roles(Roles.ADMIN))
+//                .withUser(userBuilder.username("dimax").password("dimax").roles(Roles.USER,Roles.ADMIN));
     }
 
-    //определяем доступ по URL
-    //АВТОРИЗАЦИЯ
+    /**
+     * Создаем базу пользователей в памяти
+     */
+    @Bean
+    public InMemoryUserDetailsManager inMemoryUserDetailsManager()
+    {
+        return new InMemoryUserDetailsManager(new ArrayList<>());
+    }
+
+    //АВТОРИЗАЦИЯ - идентификация доступа к ресурсам в зависимости от роли пользователя
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.formLogin()

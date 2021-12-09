@@ -6,7 +6,7 @@ import springsecurity.business.entities.User;
 import java.util.List;
 
 @Repository
-public class UserDaoSetImp implements UserDao {
+public class UserDaoImp implements UserDao {
 
 
 

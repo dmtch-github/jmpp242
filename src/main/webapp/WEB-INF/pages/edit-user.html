@@ -22,7 +22,7 @@
         <input type="text" th:field="${user.email}" placeholder="string" />
         <br>
         <label th:utext="#{table.column.role} + '<br>'">Last Name</label>
-        <input type="text" th:field="${user.role}" placeholder="string" />
+        <input type="text" th:field="${user.getRoles}" placeholder="string" />
     </div>
 
     <div>
