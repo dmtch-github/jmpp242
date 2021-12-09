@@ -6,8 +6,6 @@ import springsecurity.business.entities.Role;
 import springsecurity.business.entities.User;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,18 +19,16 @@ public class UserDaoMemImp implements UserDao {
     @Autowired
     public UserDaoMemImp(InMemoryUserDetailsManager inMemoryUserDetailsManager) {
 
-        User user = new User(0,"dima", "Dima", "Dmitriev",
-                (byte)23, "dima@ya.ru", "dima",
-                Collections.singleton(new Role(0, "ROLE_USER")));
+        User user = new User(0,"dima@ya.ru", "Dima", "Dmitriev",
+                (byte)23, "dima", Collections.singleton(new Role(0, "ROLE_USER")));
         users.put(user.getId(),user);
         inMemoryUserDetailsManager.createUser(user);
-        user = new User(1,"admin", "Admin", "Adminov",
-                (byte)32, "admin@yandex.ru", "admin",
-                Collections.singleton(new Role(1, "ROLE_ADMIN")));
+        user = new User(1,"admin@ya.ru", "Admin", "Adminov",
+                (byte)32, "admin", Collections.singleton(new Role(1, "ROLE_ADMIN")));
         users.put(user.getId(),user);
         inMemoryUserDetailsManager.createUser(user);
-        user = new User(2,"dimax", "Dimax", "Adminov",
-                (byte)28, "dimax@yandex.ru", "dimax",
+        user = new User(2,"dimax@yandex.ru", "Dimax", "Adminov",
+                (byte)28, "dimax",
                 new HashSet<Role>(Arrays.asList(new Role(0, "ROLE_USER"), new Role(1, "ROLE_ADMIN"))));
         users.put(user.getId(),user);
         inMemoryUserDetailsManager.createUser(user);

@@ -9,6 +9,7 @@
 <form th:action="@{${urlRoot}}" method="post">
     <table border="1px" aria-describedby="userList">
         <tr>
+            <th id="id" th:utext="#{table.column.id}">Name</th>
             <th id="name" th:utext="#{table.column.name}">Name</th>
             <th id="lastName" th:utext="#{table.column.lastName}">Last Name</th>
             <th id="age" th:utext="#{table.column.age}">Age</th>
@@ -18,11 +19,18 @@
             <th id="buttonDelete" th:utext="#{table.column.delete}">Delete</th>
         </tr>
         <tr th:each ="u : ${listUsers}">
+            <td th:utext="${u.id}">...</td>
             <td th:utext="${u.name}">...</td>
             <td th:utext="${u.lastName}">...</td>
             <td th:utext="${u.age}">...</td>
             <td th:utext="${u.email}">...</td>
-            <td th:utext="${u.getRoles}">...</td>
+            <td th:with="roles=''">
+                <p th:each="role : ${u.roles}">
+                    <span th:text="${role.role}">Roles</span>
+<!--                    <span th:each="role : ${u.roles}" th:text="${role.role}+' '">Roles</span>-->
+<!--                    <span th:text="${#strings.substringAfter(${{role.role}},'ROLE_')}">Roles</span>-->
+                </p>
+            </td>
             <td>
                 <button type="submit" name="update" th:value="${u.id}" th:text="#{button.update}">Update</button>
             </td>

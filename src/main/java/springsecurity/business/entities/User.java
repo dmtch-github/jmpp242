@@ -25,8 +25,8 @@ public class User implements UserDetails {
     @Column(name="id")
     private int id;
 
-    @Column(name="nickname")
-    private String nickname;    //уникальное имя
+    @Column(name="email")
+    private String email;   //уникальное значение
 
     @Column(name="name")
     private String name;
@@ -36,9 +36,6 @@ public class User implements UserDetails {
 
     @Column(name="age")
     private byte age;
-
-    @Column(name="email")
-    private String email;
 
     @Column(name="password")
     private String password;
@@ -61,7 +58,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return nickname;
+        return email;
     }
 
     @Override
@@ -88,11 +85,10 @@ public class User implements UserDetails {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", nickname='" + nickname + '\'' +
+                ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", age=" + age +
-                ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", roles=" + roles +
                 '}';
