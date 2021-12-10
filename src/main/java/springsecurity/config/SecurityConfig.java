@@ -1,5 +1,7 @@
 package springsecurity.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -9,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -29,6 +32,10 @@ import java.util.Properties;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    @Qualifier("")
+    UserDetailsService userDetailsService;
+
     /**
      * Задаем тип кодирования пароля
      * Метод конфликтует со строкой задаваемой в методе configure(AuthenticationManagerBuilder auth)
@@ -44,6 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
+        //аутентификация будет через класс с интерфейсом UserDetailsService
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
         //создание базы пользователей в слое UserDaoMemImp
         auth.userDetailsService(inMemoryUserDetailsManager());
 //        //пароль пока не шифруем

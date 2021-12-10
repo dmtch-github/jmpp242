@@ -77,7 +77,7 @@ public class UserDaoMemImp implements UserDao {
     }
 
     @Override
-    public User getUser(String username) {
+    public User getUserByName(String username) {
         if(inMemoryUserDetailsManager.userExists(username)) {
             for (User user: users.values()) {
                 if (user.getUsername().equals(username)) {

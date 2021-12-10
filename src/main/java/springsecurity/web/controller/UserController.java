@@ -2,7 +2,6 @@ package springsecurity.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import springsecurity.business.service.UserService;
 
-import java.util.Collection;
 import java.util.Set;
 
 @Controller
@@ -38,7 +36,7 @@ public class UserController {
         } else {
             model.addAttribute("admin", false);
         }
-        model.addAttribute("user", userService.getUser(auth.getName()));
+        model.addAttribute("user", userService.getUserByName(auth.getName()));
         model.addAttribute("urlRoot", URL_ROOT);
         return "user";
     }
