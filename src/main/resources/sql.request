@@ -1,0 +1,6 @@
+INSERT INTO roles242(id, role) VALUES (1, 'ROLE_ADMIN'), (2, 'ROLE_USER'); 
+
+INSERT INTO users242_roles242(user_id, role_id) VALUES (1, 1);
+
+INSERT INTO users242(id, age, email, last_name, name,password) VALUES (1, 33, 'admin', 'AdminLast', 'AdminName', 'admin'); 
+

@@ -54,7 +54,9 @@ public class User implements UserDetails {
         this.lastName = lastName;
         this.age = age;
         this.password = password;
-        setRoles(roles);
+        this.roles = roles;
+        //setRoles(roles);
+        System.out.println("User.конструктор с частью параметров: Создал объект юзер с ролями");
     }
 
     @Override
@@ -92,43 +94,51 @@ public class User implements UserDetails {
         return true;
     }
 
-
-    /**
-     * При установке ролей создается
-     * строка с описанием ролей для сайта
-     */
-    public void setRoles(Set<Role> roles) {
+    public void rolesToText() {
         textRoles = roles.stream()
                 .map(x -> x.getRole())
                 .map(x -> x.replace("ROLE_",""))
                 .sorted()
                 .collect(Collectors.joining(" "));
-        System.out.println(textRoles);
-        this.roles = roles;
     }
 
-    public void setRoles(String textRoles) {
-        String[] rls = textRoles.split(" ");
-        if(rls.length == 1) {
-            if(rls[0].equals("USER")) {
-                setRoles(Collections.singleton(new Role(0, "ROLE_USER")));
-            } else {
-                setRoles(Collections.singleton(new Role(1, "ROLE_ADMIN")));
-            }
-        }
-        if(rls.length == 2) {
-            setRoles(new HashSet<Role>(Arrays.asList(
-                    new Role(0, "ROLE_USER"),
-                    new Role(1, "ROLE_ADMIN"))));
-        }
-
-        //TODO здесь преобразовать строку в набор объектов Role
-        //и установить в this.roles
-    }
-
-    public String getTextRoles() {
-        return textRoles;
-    }
+//
+//    /**
+//     * При установке ролей создается
+//     * строка с описанием ролей для сайта
+//     */
+//    public void setRoles(Set<Role> roles) {
+//        textRoles = roles.stream()
+//                .map(x -> x.getRole())
+//                .map(x -> x.replace("ROLE_",""))
+//                .sorted()
+//                .collect(Collectors.joining(" "));
+//        System.out.println(textRoles);
+//        this.roles = roles;
+//    }
+//
+//    public void setRoles(String textRoles) {
+//        String[] rls = textRoles.split(" ");
+//        if(rls.length == 1) {
+//            if(rls[0].equals("USER")) {
+//                setRoles(Collections.singleton(new Role(0, "ROLE_USER")));
+//            } else {
+//                setRoles(Collections.singleton(new Role(1, "ROLE_ADMIN")));
+//            }
+//        }
+//        if(rls.length == 2) {
+//            setRoles(new HashSet<Role>(Arrays.asList(
+//                    new Role(0, "ROLE_USER"),
+//                    new Role(1, "ROLE_ADMIN"))));
+//        }
+//
+//        //TODO здесь преобразовать строку в набор объектов Role
+//        //и установить в this.roles
+//    }
+//
+//    public String getTextRoles() {
+//        return textRoles;
+//    }
 
     @Override
     public String toString() {
@@ -139,8 +149,8 @@ public class User implements UserDetails {
                 ", lastName='" + lastName + '\'' +
                 ", age=" + age +
                 ", password='" + password + '\'' +
+                ", textRoles='" + textRoles + '\'' +
                 ", roles=" + roles +
                 '}';
     }
-
 }

@@ -5,13 +5,17 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import springsecurity.business.entities.Roles;
 import springsecurity.business.entities.User;
 import springsecurity.business.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -43,8 +47,7 @@ public class AdminController {
         } else {
             model.addAttribute("user", false);
         }
-
-        model.addAttribute("listUsers", userService.getUsers());
+        model.addAttribute("listUsers", userService.getUsers()); //new ArrayList<User>()); //
         model.addAttribute("urlRoot", URL_ROOT);
         return "admin";
     }
@@ -81,7 +84,9 @@ public class AdminController {
     @PostMapping(value = "", params = "add")
     public String addUser(ModelMap model) {
         System.out.println("Метод addUser");
-        model.addAttribute("user", new User());
+        User user = new User();
+        user.setTextRoles(Roles.USER);
+        model.addAttribute("user", user);
         model.addAttribute("urlRoot", URL_ROOT);
         return "edit-user";
     }
@@ -93,7 +98,6 @@ public class AdminController {
     @PostMapping(value = "", params = "save")
     public String saveUser(User user) {
         System.out.println("Метод saveUser");
-        user.setRoles(user.getTextRoles());
         userService.saveUser(user);
         return "redirect:" + URL_ROOT;
     }

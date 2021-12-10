@@ -28,13 +28,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-//@Configuration
+@Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    @Qualifier("")
-    UserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService;
 
     /**
      * Задаем тип кодирования пароля
@@ -54,24 +53,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //аутентификация будет через класс с интерфейсом UserDetailsService
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
         //создание базы пользователей в слое UserDaoMemImp
-        auth.userDetailsService(inMemoryUserDetailsManager());
-//        //пароль пока не шифруем
-//        User.UserBuilder userBuilder = User.withDefaultPasswordEncoder();
-//        //создание базы пользователей с ручным заполнением
-//        auth.inMemoryAuthentication()
-//                .withUser(userBuilder.username("dima").password("dima").roles(Roles.USER))
-//                .withUser(userBuilder.username("admin").password("admin").roles(Roles.ADMIN))
-//                .withUser(userBuilder.username("dimax").password("dimax").roles(Roles.USER,Roles.ADMIN));
+//        auth.userDetailsService(inMemoryUserDetailsManager());// использует бин inMemoryUserDetailsManager()
     }
 
     /**
      * Создаем базу пользователей в памяти
      */
-    @Bean
-    public InMemoryUserDetailsManager inMemoryUserDetailsManager()
-    {
-        return new InMemoryUserDetailsManager(new ArrayList<>());
-    }
+//    @Bean
+//    public InMemoryUserDetailsManager inMemoryUserDetailsManager()
+//    {
+//        return new InMemoryUserDetailsManager(new ArrayList<>());
+//    }
 
     //АВТОРИЗАЦИЯ - идентификация доступа к ресурсам в зависимости от роли пользователя
     @Override

@@ -10,13 +10,13 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Repository
+//@Repository
 public class UserDaoMemImp implements UserDao {
 
     private final InMemoryUserDetailsManager inMemoryUserDetailsManager;
     private final Map<Integer, User> users = new HashMap<>();
 
-    @Autowired
+    //@Autowired
     public UserDaoMemImp(InMemoryUserDetailsManager inMemoryUserDetailsManager) {
 
         User user = new User(0,"dima@ya.ru", "Dima", "Dmitriev",
