@@ -10,7 +10,7 @@
     <input type="submit" th:value="#{button.logout}"/>
 </form>
 <h3 th:utext="#{page.title.show-user}">...</h3>
-<a th:href="@{/admin}" th:if="${admin}" th:utext="#{page.goto.admin}">...</a>
+<a th:href="@{/admin}" th:if="${isadmin}" th:utext="#{page.goto.admin}">...</a>
 <table border="1px" aria-describedby="userList">
     <tr>
         <th id="id" th:utext="#{table.column.id}">Name</th>
@@ -41,9 +41,5 @@
 <!--        </td>-->
     </tr>
 </table>
-<div>
-    <input type="submit" name="logout" th:value="#{button.logout}">
-</div>
-
 </body>
 </html>

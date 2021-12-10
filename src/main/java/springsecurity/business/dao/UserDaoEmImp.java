@@ -26,54 +26,50 @@ public class UserDaoEmImp implements UserDao {
         return users;
     }
 
+
+    public Role getRoleByName(String rolename) {
+        String hqlRequest = "FROM Role WHERE role = :role";
+        List<Role> list = em.createQuery(hqlRequest, Role.class)
+                .setParameter("role", rolename)
+                .getResultList(); //getSingleResult выдает ошибку.
+        return list.size() > 0 ? list.get(0) : null;
+    }
+
+
     @Override
     public void saveUser(User user) {
-        System.out.println("UserDao.saveUser ROLES_TEXT=" + user.getTextRoles());
-//        String[] names = (String[]) Arrays.stream(user.getTextRoles().split(" ")).distinct().toArray();
+        System.out.println("UserDao.saveUser Работаю со строкой ролей = " + user.getTextRoles());
         String[] names = user.getTextRoles().split(" ");
-        System.out.println("Получил такой names=" + names);
+        System.out.println("UserDao.saveUser Получил такой список = " + names);
 
-String[] list = Arrays.stream(names)
+        String[] namesRole = Arrays.stream(names)
             .map(String::toUpperCase)
             .filter(x -> x.equals(Roles.ADMIN) || x.equals(Roles.USER))
             .distinct()
-                .toArray(String[]::new);
-            //.collect(ArrayList::new, ArrayList.add, ArrayList::addAll);
+            .map(x -> Roles.ROLE_PREFIX+x)
+            .toArray(String[]::new);
 
-        System.out.println("Получил такой lis=" + list);
+        //если роли не определены, то назначаем роль USER
+        if(namesRole.length == 0) {
+            namesRole = new String[]{Roles.ROLE_USER};
+        }
 
+        System.out.println("UserDao.saveUser Обработал # Получил такой namesRole = " + namesRole);
 
-        System.out.println("UserDao.saveUser names=" + names);
         Set<Role> roles = new HashSet<>();
-        Role role = null;
-        for(String s : names) {
-            switch (s) {
-                case Roles.ADMIN:
-                    System.out.println("UserDao.saveUser извлекаю ADMIN");
-                    role = em.find(Role.class, Roles.ROLE_ADMIN_ID);
-                    System.out.println("UserDao.saveUser извлек ADMIN = " + role);
-                    break;
-                case Roles.USER:
-                    System.out.println("UserDao.saveUser извлекаю USER");
-                    role = em.find(Role.class, Roles.ROLE_USER_ID);
-                    System.out.println("UserDao.saveUser извлек USER = " + role);
-                    break;
+        for(String name : namesRole) {
+            Role role = getRoleByName(name);
+            if(role == null) {
+                role = new Role(name); //создание роли, когда её нет в БД
             }
-            if(role != null){
-                roles.add(role);
-                role = null;
-            }
+            roles.add(role);
         }
-        if(roles.size() == 0) { //по умолчанию назначаем роль USER
-            System.out.println("UserDao.saveUser список ролей путь назначаем USER");
-            role = em.find(Role.class, Roles.ROLE_USER_ID);
-            if(role != null) {
-                user.setRoles(Collections.singleton(role));
-            }
-        } else {
-            System.out.println("UserDao.saveUser список ролей не пуст " + roles);
-            user.setRoles(roles);
-        }
+
+        System.out.println("UserDao.saveUser Юзер имеет такие роли = " + user.getRoles());
+        System.out.println("UserDao.saveUser Назначаю Юзеру такие роли = " + roles);
+
+        user.setRoles(roles);
+
         if(user.getId() == 0) {
             System.out.println("Буду сохранять юзера айди=0. Роль = " + user.getRoles());
             em.persist(user);
@@ -81,7 +77,6 @@ String[] list = Arrays.stream(names)
             System.out.println("Буду сохранять юзера айди=" + user.getId() +"  Роль = " + user.getRoles());
             em.merge(user);
         }
-
     }
 
     @Override
@@ -105,9 +100,16 @@ String[] list = Arrays.stream(names)
     @Override
     public User getUserByName(String username) {
         String hqlRequest = "FROM User WHERE email = :email";
-        User user = (User) em.createQuery(hqlRequest)
+        System.out.println("Посылаю запрос \"" + hqlRequest + "\"");
+
+        List<User> list = em.createQuery(hqlRequest, User.class)
                 .setParameter("email", username)
-                .getSingleResult();
+                .getResultList();
+//        .getSingleResult();
+        System.out.println("Получил список длиной " + list.size());
+//
+        User user = (list.size()>0 ? list.get(0) : null);
+        System.out.println("Получил Юзер " + user);
         if(user != null) {
             user.rolesToText();
         }

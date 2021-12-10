@@ -42,11 +42,9 @@ public class AdminController {
         System.out.println("Метод admin");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Set<String> roles = AuthorityUtils.authorityListToSet(auth.getAuthorities());
-        if (roles.contains("ROLE_USER")) {
-            model.addAttribute("user", true);
-        } else {
-            model.addAttribute("user", false);
-        }
+        model.addAttribute("isuser", roles.contains("ROLE_USER"));
+        System.out.println("admin: Передал в модель " + roles.contains("ROLE_USER"));
+
         model.addAttribute("listUsers", userService.getUsers()); //new ArrayList<User>()); //
         model.addAttribute("urlRoot", URL_ROOT);
         return "admin";

@@ -31,11 +31,7 @@ public class UserController {
         System.out.println("Метод admin");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Set<String> roles = AuthorityUtils.authorityListToSet(auth.getAuthorities());
-        if (roles.contains("ROLE_ADMIN")) {
-            model.addAttribute("admin", true);
-        } else {
-            model.addAttribute("admin", false);
-        }
+        model.addAttribute("isadmin", roles.contains("ROLE_ADMIN"));
         model.addAttribute("user", userService.getUserByName(auth.getName()));
         model.addAttribute("urlRoot", URL_ROOT);
         return "user";

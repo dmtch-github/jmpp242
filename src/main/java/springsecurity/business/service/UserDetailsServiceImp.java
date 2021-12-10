@@ -36,9 +36,10 @@ public class UserDetailsServiceImp implements UserDetailsService {
         User user = userService.getUserByName(username);
         System.out.println("АВТОРИЗОВАЛ из БАЗЫ============================================");
         if(user == null && username.equals("admin")) {
-            //здесь сначала проверить, что в БД нет ни одной записи User
+            //TODO здесь сначала проверить, что в БД нет ни одной записи User
             user = new User(1, "admin", "Admin", "Admin",
-                    (byte) 32, "admin", Collections.singleton(new Role(Roles.ROLE_ADMIN_ID, Roles.ROLE_ADMIN)));
+                    (byte) 32, "admin", Collections.singleton(new Role(Roles.ROLE_ADMIN)));
+//            (byte) 32, "admin", Collections.singleton(new Role(Roles.ROLE_ADMIN_ID, Roles.ROLE_ADMIN)));
         }
         return user;
     }

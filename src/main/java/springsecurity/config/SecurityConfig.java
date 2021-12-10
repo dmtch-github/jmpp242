@@ -101,8 +101,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests() // предоставить разрешение для перечисленых URL
                 .antMatchers("/login").anonymous()
+                .antMatchers("/user/**").hasRole(Roles.USER)
                 .antMatchers("/admin/**").hasRole(Roles.ADMIN)  //доступ через роли
-                .antMatchers("/user/**").hasAnyRole(Roles.USER, Roles.ADMIN)
 //                .antMatchers("/admin/**").hasAuthority(Roles.ROLE_ADMIN)  //доступ через разрешения
 //                .antMatchers("/user/**").hasAnyAuthority(Roles.ROLE_USER, Roles.ROLE_ADMIN)
 //                .antMatchers("/**").permitAll() //разрешает доступ всем

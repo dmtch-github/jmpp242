@@ -41,7 +41,8 @@ public class User implements UserDetails {
     @Transient
     private String textRoles;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.MERGE},
+            fetch = FetchType.EAGER)
     @JoinTable(name = "users242_roles242",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -97,7 +98,7 @@ public class User implements UserDetails {
     public void rolesToText() {
         textRoles = roles.stream()
                 .map(x -> x.getRole())
-                .map(x -> x.replace("ROLE_",""))
+                .map(x -> x.replace(Roles.ROLE_PREFIX,""))
                 .sorted()
                 .collect(Collectors.joining(" "));
     }
