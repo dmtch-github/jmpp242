@@ -5,7 +5,7 @@
     <title th:utext="#{page.title.all-users}">User list</title>
 </head>
 <body>
-<span th:utext="#{page.you.are}"/> <b th:inline="text"> [[${#httpServletRequest.remoteUser}]] </b>
+<span th:utext="#{page.you.are}"></span> <strong th:inline="text"> [[${#httpServletRequest.remoteUser}]] </strong>
 <form th:action="@{/logout}" method="POST">
     <input type="submit" th:value="#{button.logout}"/>
 </form>
@@ -29,23 +29,19 @@
         <td th:utext="${u.age}">...</td>
         <td th:utext="${u.email}">...</td>
         <td th:utext="${u.textRoles}">...</td>
-<!--        <td>-->
-<!--            <span th:each="role : ${u.roles}" th:text="${role.role}+' '">Roles</span>-->
-<!--&lt;!&ndash;                <span th:text="${#strings.substringAfter(${{role.role}},'ROLE_')}">Roles</span>&ndash;&gt;-->
-<!--        </td>-->
         <td>
-            <form th:method="PATCH" th:action="@{/admin/{id}(id=${u.getId()})}" th:object="${u}">
+            <form th:method="PATCH" th:action="@{{home}/{id}(home=${urlRoot}, id=${u.getId()})}" th:object="${u}">
                 <input type="submit" name="update" th:value="#{button.update}">
             </form>
         </td>
         <td>
-            <form th:method="DELETE" th:action="@{/admin/{id}(id=${u.getId()})}">
+            <form th:method="DELETE" th:action="@{{home}/{id}(home=${urlRoot}, id=${u.getId()})}">
                 <input type="submit" name="delete" th:value="#{button.delete}">
             </form>
         </td>
     </tr>
 </table>
-<form th:method="POST" th:action="@{/admin}">
+<form th:method="POST" th:action="@{${urlRoot}}">
     <input type="submit" name="add" th:value="#{button.add}">
 </form>
 </body>

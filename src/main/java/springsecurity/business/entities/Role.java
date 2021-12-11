@@ -24,7 +24,7 @@ public class Role implements GrantedAuthority {
     private int id;
 
     @Column(name="role")
-    private String role;
+    private String name;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.MERGE})
     @JoinTable(name = "users242_roles242",
@@ -35,25 +35,18 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String getAuthority() {
-        return role;
+        return name;
     }
 
-
-    public Role(String role) {
-        this.role = role;
+    public Role(String name) {
+        this.name = name;
     }
-
-    public Role(int id, String role) {
-        this.id = id;
-        this.role = role;
-    }
-
 
     @Override
     public String toString() {
         return "Role{" +
                 "id=" + id +
-                ", role='" + role + '\'' +
+                ", name='" + name + '\'' +
                 '}';
     }
 }

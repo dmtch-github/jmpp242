@@ -1,6 +1,5 @@
 package springsecurity.config;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -32,7 +31,6 @@ public class DbConfig {
     //определяет связь с БД, нужен для формирования EntityManager
     @Bean
     public DataSource getDataSource(){
-        //сделано через библиотеку javax.sql
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(Objects.requireNonNull(env.getProperty("db.driver")));
         dataSource.setUrl(env.getProperty("db.url"));
@@ -60,7 +58,6 @@ public class DbConfig {
         return emf;
     }
 
-    //похоже этот возвращает EntityManager
     @Bean
     public PlatformTransactionManager getTransactionManagerEmf() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();

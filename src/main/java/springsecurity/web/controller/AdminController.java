@@ -1,10 +1,15 @@
 package springsecurity.web.controller;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import springsecurity.business.entities.Role;
 import springsecurity.business.entities.Roles;
 import springsecurity.business.entities.User;
 import springsecurity.business.service.UserService;
@@ -21,7 +26,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/admin")
 public class AdminController {
 
-    private static final String URL_ROOT = "/admin";
+    public static final String URL_ROOT = "/admin";
+    private static final String NAME_URL_ROOT = "urlRoot";
+    private static final String COMMAND_REDIRECT = "redirect:";
     private final UserService userService;
 
     @Autowired
@@ -36,17 +43,16 @@ public class AdminController {
      *      добавления нового пользователя
      *      редактирования данных пользователя
      *      удаления пользователя
+     *      выхода из системы
+     * При наличии роли User показывает ссылку на личный кабинет
      */
     @GetMapping("")
     public String admin(Model model) {
-        System.out.println("Метод admin");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Set<String> roles = AuthorityUtils.authorityListToSet(auth.getAuthorities());
         model.addAttribute("isuser", roles.contains("ROLE_USER"));
-        System.out.println("admin: Передал в модель " + roles.contains("ROLE_USER"));
-
-        model.addAttribute("listUsers", userService.getUsers()); //new ArrayList<User>()); //
-        model.addAttribute("urlRoot", URL_ROOT);
+        model.addAttribute("listUsers", userService.getUsers());
+        model.addAttribute(NAME_URL_ROOT, URL_ROOT);
         return "admin";
     }
 
@@ -57,9 +63,8 @@ public class AdminController {
     @PostMapping(value = "/{id}", params = "delete")
     public String deleteUser(ModelMap model,
                              @PathVariable("id") int id) {
-        System.out.println("Нажата кнопка УДАЛИТЬ с id=" + id);
         userService.deleteUser(id);
-        return "redirect:" + URL_ROOT;
+        return COMMAND_REDIRECT + URL_ROOT;
     }
 
     /**
@@ -69,9 +74,8 @@ public class AdminController {
     @PostMapping(value = "/{id}", params = "update")
     public String updateUser(@PathVariable("id") int id,
                              Model model) {
-        System.out.println("Нажата кнопка ИЗМЕНИТЬ с id=" + id);
         model.addAttribute("user", userService.getUser(id));
-        model.addAttribute("urlRoot", URL_ROOT);
+        model.addAttribute(NAME_URL_ROOT, URL_ROOT);
         return "edit-user";
     }
 
@@ -81,23 +85,42 @@ public class AdminController {
      */
     @PostMapping(value = "", params = "add")
     public String addUser(ModelMap model) {
-        System.out.println("Метод addUser");
         User user = new User();
         user.setTextRoles(Roles.USER);
         model.addAttribute("user", user);
-        model.addAttribute("urlRoot", URL_ROOT);
+        model.addAttribute(NAME_URL_ROOT, URL_ROOT);
         return "edit-user";
     }
 
     /**
-     * Сохраняет данные пользователя в БД и
-     * перенаправляет на главную страницу
+     * Сохраняет данные пользователя в БД,
+     * динамически меняет права авторизованного администратора
+     * и перенаправляет на главную страницу
      */
     @PostMapping(value = "", params = "save")
     public String saveUser(User user) {
-        System.out.println("Метод saveUser");
         userService.saveUser(user);
-        return "redirect:" + URL_ROOT;
+        //для текущего пользователя делаем динамическую авторизацию: смена прав
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(((UserDetails) auth.getPrincipal()).getUsername().equals(user.getUsername())) {
+            List<String> newRoles = user.getRoles().stream()
+                    .map(Role::getName)
+                    .collect(Collectors.toList());
+            List<GrantedAuthority> auths = getAuthorities(newRoles);
+            Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(),auth.getCredentials(),auths);
+            SecurityContextHolder.getContext().setAuthentication(newAuth);
+        }
+        return COMMAND_REDIRECT + URL_ROOT;
+    }
+
+    private List<GrantedAuthority> getAuthorities(List<String> roles) {
+        List<GrantedAuthority> auths = new ArrayList<>();
+        if(!roles.isEmpty()) {
+            for (String s : roles) {
+                auths.add(new SimpleGrantedAuthority(s));
+            }
+        }
+        return auths;
     }
 
     /**
@@ -106,14 +129,6 @@ public class AdminController {
      */
     @PostMapping(value = "", params = "redirect")
     public String redirect(ModelMap model) {
-        System.out.println("Метод redirect");
-        return "redirect:" + URL_ROOT;
+        return COMMAND_REDIRECT + URL_ROOT;
     }
-
-    @PostMapping(value = "", params = "logout")
-    public String logout(ModelMap model) {
-        System.out.println("Метод logout");
-        return "redirect:/login";
-    }
-
 }

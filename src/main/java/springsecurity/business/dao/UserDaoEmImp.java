@@ -1,7 +1,6 @@
 package springsecurity.business.dao;
 
 import org.springframework.stereotype.Repository;
-import springsecurity.business.dao.UserDao;
 import springsecurity.business.entities.Role;
 import springsecurity.business.entities.Roles;
 import springsecurity.business.entities.User;
@@ -18,7 +17,7 @@ public class UserDaoEmImp implements UserDao {
 
     @Override
     public List<User> getUsers() {
-        List<User> users = em.createQuery("FROM User")
+        List<User> users = em.createQuery("FROM User",User.class)
                 .getResultList();
         for (User u: users) {
             u.rolesToText(); //преобразуем роли в текстовое описание
@@ -26,65 +25,49 @@ public class UserDaoEmImp implements UserDao {
         return users;
     }
 
-
     public Role getRoleByName(String rolename) {
         String hqlRequest = "FROM Role WHERE role = :role";
         List<Role> list = em.createQuery(hqlRequest, Role.class)
                 .setParameter("role", rolename)
-                .getResultList(); //getSingleResult выдает ошибку.
-        return list.size() > 0 ? list.get(0) : null;
+                .getResultList();
+        return list.isEmpty() ? null: list.get(0);
     }
-
 
     @Override
     public void saveUser(User user) {
-        System.out.println("UserDao.saveUser Работаю со строкой ролей = " + user.getTextRoles());
-        String[] names = user.getTextRoles().split(" ");
-        System.out.println("UserDao.saveUser Получил такой список = " + names);
-
-        String[] namesRole = Arrays.stream(names)
+        String[] namesRole = Arrays.stream(user.getTextRoles().split(" "))
             .map(String::toUpperCase)
             .filter(x -> x.equals(Roles.ADMIN) || x.equals(Roles.USER))
             .distinct()
             .map(x -> Roles.ROLE_PREFIX+x)
             .toArray(String[]::new);
 
-        //если роли не определены, то назначаем роль USER
+        //если ролей нет, то назначаем роль USER
         if(namesRole.length == 0) {
             namesRole = new String[]{Roles.ROLE_USER};
         }
 
-        System.out.println("UserDao.saveUser Обработал # Получил такой namesRole = " + namesRole);
-
         Set<Role> roles = new HashSet<>();
         for(String name : namesRole) {
-            Role role = getRoleByName(name);
+            Role role = getRoleByName(name); //получаем роль из БД
             if(role == null) {
-                role = new Role(name); //создание роли, когда её нет в БД
+                role = new Role(name); //создаем роль, когда её нет в БД
             }
             roles.add(role);
         }
 
-        System.out.println("UserDao.saveUser Юзер имеет такие роли = " + user.getRoles());
-        System.out.println("UserDao.saveUser Назначаю Юзеру такие роли = " + roles);
-
         user.setRoles(roles);
 
         if(user.getId() == 0) {
-            System.out.println("Буду сохранять юзера айди=0. Роль = " + user.getRoles());
             em.persist(user);
         } else {
-            System.out.println("Буду сохранять юзера айди=" + user.getId() +"  Роль = " + user.getRoles());
             em.merge(user);
         }
     }
 
     @Override
     public void deleteUser(int id) {
-        User user = em.find(User.class, id);
-        //удаление юзера должно происходить без удаления роли
-        em.remove(user);
-        System.out.println("daoEntityManager: daleteUser");
+        em.remove(em.find(User.class, id));
     }
 
     @Override
@@ -96,25 +79,27 @@ public class UserDaoEmImp implements UserDao {
         return user;
     }
 
-
     @Override
     public User getUserByName(String username) {
         String hqlRequest = "FROM User WHERE email = :email";
-        System.out.println("Посылаю запрос \"" + hqlRequest + "\"");
-
         List<User> list = em.createQuery(hqlRequest, User.class)
                 .setParameter("email", username)
                 .getResultList();
-//        .getSingleResult();
-        System.out.println("Получил список длиной " + list.size());
-//
-        User user = (list.size()>0 ? list.get(0) : null);
-        System.out.println("Получил Юзер " + user);
+        User user = list.isEmpty() ? null: list.get(0);
         if(user != null) {
             user.rolesToText();
         }
         return user;
     }
 
-
+    /**
+     * Проверяет наличие записей в БД пользователей
+     * Используется при создании временного администратора
+     */
+    @Override
+    public int getCountUsers() {
+        String hqlRequest = "SELECT COUNT(u) FROM User u";
+        List<Long> list = em.createQuery(hqlRequest,Long.class).getResultList();
+        return (int) (list.isEmpty()?0:list.get(0));
+    }
 }

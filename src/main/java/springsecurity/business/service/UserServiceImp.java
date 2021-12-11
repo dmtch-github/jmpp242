@@ -1,15 +1,12 @@
 package springsecurity.business.service;
 
 import springsecurity.business.dao.UserDao;
-import springsecurity.business.entities.Role;
-import springsecurity.business.entities.Roles;
 import springsecurity.business.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -18,7 +15,6 @@ public class UserServiceImp implements UserService{
     private final UserDao userDao;
 
     @Autowired
-    //public UserServiceImp(@Qualifier("userDaoMemImp") UserDao userDao) {
     public UserServiceImp(@Qualifier("daoEntityManager") UserDao userDao) {
         this.userDao = userDao;
     }
@@ -51,5 +47,11 @@ public class UserServiceImp implements UserService{
     @Transactional
     public User getUserByName(String username) {
         return userDao.getUserByName(username);
+    }
+
+    @Override
+    @Transactional
+    public int getCountUsers() {
+        return userDao.getCountUsers();
     }
 }

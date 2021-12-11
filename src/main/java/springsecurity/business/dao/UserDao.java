@@ -15,4 +15,6 @@ public interface UserDao {
     public User getUser(int id);
 
     public User getUserByName(String username);
+
+    public int getCountUsers();
 }
