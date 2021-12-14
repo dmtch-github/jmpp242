@@ -17,7 +17,9 @@ public class UserDaoEmImp implements UserDao {
 
     @Override
     public List<User> getUsers() {
-        List<User> users = em.createQuery("FROM User",User.class)
+        //("FROM User",User.class) + FetchType.Eager - 1 запрос сущностей + N запросов ассоциаций
+        List<User> users = em.createQuery("SELECT u FROM User u JOIN FETCH u.roles r",User.class)
+                //FetchType.Lazy - 1 запрос для получения всех сущностей и ассоциаций
                 .getResultList();
         for (User u: users) {
             u.rolesToText(); //преобразуем роли в текстовое описание
@@ -32,6 +34,9 @@ public class UserDaoEmImp implements UserDao {
                 .getResultList();
         return list.isEmpty() ? null: list.get(0);
     }
+
+
+
 
     @Override
     public void saveUser(User user) {
@@ -81,7 +86,9 @@ public class UserDaoEmImp implements UserDao {
 
     @Override
     public User getUserByName(String username) {
-        String hqlRequest = "FROM User WHERE email = :email";
+//        String hqlRequest = "FROM User WHERE email = :email";
+        String hqlRequest = "SELECT u FROM User u JOIN FETCH u.roles r WHERE email = :email";
+
         List<User> list = em.createQuery(hqlRequest, User.class)
                 .setParameter("email", username)
                 .getResultList();
